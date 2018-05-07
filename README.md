@@ -28,7 +28,7 @@ docker-compose up -d
 ### 1. Склонируйте репозиторий
 
 ```bash
-git clone git clone git@bitbucket.org:hypnotic_signal/complaints.git && cd complaints
+git clone git clone git@github.com:GolosChain/golos-abuse.git && cd golos-abuse
 ```
 
 ### 2. Установите npm зависимости
