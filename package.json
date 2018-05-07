@@ -1,0 +1,35 @@
+{
+  "name": "complaints",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_PATH=./common node server/index",
+    "test:api": "NODE_PATH=./common ./node_modules/mocha/bin/mocha -b server/test",
+    "test": "NODE_PATH=./common npm run test:api"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ajv": "^6.4.0",
+    "ajv-keywords": "^3.2.0",
+    "bcrypt": "^2.0.1",
+    "body-parser": "^1.18.2",
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "colors": "^1.2.3",
+    "express": "^4.16.3",
+    "http-status-codes": "^1.3.0",
+    "jsonwebtoken": "^8.2.1",
+    "mocha": "^5.1.1",
+    "moment": "^2.22.1",
+    "nconf": "^0.10.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "request": "^2.85.0",
+    "sqlstring": "^2.3.1",
+    "steem": "^0.7.1",
+    "tarantool-driver": "^2.0.5",
+    "websocket": "^1.0.26"
+  }
+}

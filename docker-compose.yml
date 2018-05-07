@@ -1,0 +1,21 @@
+version: '3.1'
+services:
+  tarantool:
+    container_name: tarantool
+    image: tarantool/tarantool:2
+    restart: always
+    command: ["tarantool", "/opt/tarantool/app.lua"]
+    ports:
+      - 3301:3301
+    environment:
+      TARANTOOL_PORT: "3301"
+    volumes:
+      - ./server/tarantool/app:/opt/tarantool
+      - ./server/tarantool/data:/var/lib/tarantool
+  swagger:
+    container_name: swagger
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8081:8080
+    environment:
+      API_URL: "http://localhost:8080/swagger.json"

@@ -1,0 +1,19 @@
+{
+  "apps": [
+    {
+      "name": "api",
+      "script": "./server/index.js",
+      "watch": false,
+      "instances": 2,
+      "exec_mode": "cluster",
+      "env": {
+        "NODE_ENV": "development",
+        "NODE_PATH": "./common"
+      },
+      "env_production": {
+        "NODE_ENV": "production",
+        "NODE_PATH": "./common"
+      }
+    }
+  ]
+}

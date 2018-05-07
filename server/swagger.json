@@ -1,0 +1,486 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Api Golos.io Complaints",
+    "version": "1.0.0",
+    "title": "Golos.io Complaints",
+    "contact": {
+      "email": "rusov.d.s@gmail.com"
+    }
+  },
+  "host": "complaints.golos.io",
+  "basePath": "/v1",
+  "tags": [
+    {
+      "name": "complaint",
+      "description": "Reason, author and comment complaints"
+    },
+    {
+      "name": "user",
+      "description": "Operations with users models"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/complaints": {
+      "get": {
+        "tags": [
+          "complaint"
+        ],
+        "summary": "Find complaints by filter",
+        "description": "",
+        "operationId": "find-complaint",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "reason",
+            "in": "query",
+            "description": "reason of complaints",
+            "type": "number"
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "description": "Username, who created complaint",
+            "type": "string"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "description": "Start timestamp",
+            "type": "number"
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "description": "End timestamp",
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit records",
+            "type": "number"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset records",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get complaints by filter",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Complaint"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "user",
+              "admin"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "complaint"
+        ],
+        "summary": "Add new complaint",
+        "description": "",
+        "operationId": "create-complaint",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "reason",
+            "in": "query",
+            "description": "Reason of complaint",
+            "type": "number"
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "description": "Username, who created complaint",
+            "type": "string"
+          },
+          {
+            "name": "author",
+            "in": "query",
+            "description": "Post author",
+            "type": "string"
+          },
+          {
+            "name": "permlink",
+            "in": "query",
+            "description": "Post permlink",
+            "type": "string"
+          },
+          {
+            "name": "comment",
+            "in": "query",
+            "description": "Complaint comment",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful insert",
+            "schema": {
+              "$ref": "#/definitions/Complaint"
+            }
+          },
+          "422": {
+            "description": "Invalid input data",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized, wrong sign by author",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/complaints/slice": {
+      "get": {
+        "tags": [
+          "complaint"
+        ],
+        "summary": "Get slice complaints by post author and permlink",
+        "description": "",
+        "operationId": "slice-complaints",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "query",
+            "description": "PostId values that need to be slice complaints",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "items": {
+                "$ref": "#/definitions/SliceResult"
+              }
+            }
+          },
+          "400": {
+            "description": "PostId is required"
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "user",
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/complaints/top": {
+      "get": {
+        "tags": [
+          "complaint"
+        ],
+        "summary": "Get top complaints",
+        "description": "",
+        "operationId": "top-complaints",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "reason",
+            "in": "query",
+            "description": "List of reasons",
+            "type": "striing"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TopComplaints"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "user",
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Find users by filter",
+        "description": "",
+        "operationId": "find-user",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "role",
+            "in": "query",
+            "description": "users role",
+            "type": "number"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "users status",
+            "type": "number"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "users email",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit records",
+            "type": "number"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset records",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get users by filter",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "user",
+              "admin"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "JWT": {
+      "description": "",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "scopes": {
+        "guest": "guest role",
+        "user": "user role",
+        "admin": "admin role"
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "role": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "created": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "Complaint": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "postId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "reason": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "created": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "SliceResult": {
+      "type": "object",
+      "properties": {
+        "sum": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "author": {
+          "type": "string"
+        },
+        "permlink": {
+          "type": "string"
+        },
+        "byReasons": {
+          "type": "object",
+          "properties": {
+            "reason-1": {
+              "type": "number"
+            },
+            "reason-2": {
+              "type": "number"
+            },
+            "reason-3": {
+              "type": "number"
+            },
+            "reason-4": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "TopComplaints": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "number"
+        },
+        "author": {
+          "type": "string"
+        },
+        "permlink": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Golos.io complaints",
+    "url": "https://bitbucket.org/hypnotic_signal/complaints"
+  }
+}
