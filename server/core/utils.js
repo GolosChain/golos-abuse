@@ -5,6 +5,10 @@ module.exports.hashPassword = (password) => {
   return bcrypt.hashSync('password', 10)
 }
 
+module.exports.comparePassword = (password, hash) => {
+  return bcrypt.compareSync(password, hash)
+}
+
 module.exports.tupleToJson = (tuple, fields) => {
   return fields.reduce((obj, key, index) => {
     obj[key] = tuple[index]
