@@ -42,9 +42,9 @@ npm install
 Конфигурация по умолчанию хранится в [config.json](./config/config.json). Для изменения конфигурации лучше всего создать новый config.[ENV].json, который зависит от переменной окружения и расширяет набор конфигураций по умолчанию.
 
 ```bash
-cp ./server/config.json ./server/config.production.json
-cp ./server/config.json ./server/config.development.json
-cp ./server/config.json ./server/config.test.json
+cp ./server/config/config.json ./server/config/config.production.json
+cp ./server/config/config.json ./server/config/config.development.json
+cp ./server/config/config.json ./server/config/config.test.json
 ```
 
 ```json

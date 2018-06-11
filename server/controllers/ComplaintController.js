@@ -3,7 +3,7 @@ const Ajv = require('ajv')
 const SqlString = require('sqlstring')
 const HttpStatus = require('http-status-codes')
 
-const {USER} = require('app@constants')
+const { USER } = require('app@constants')
 
 const app = require('../core/app')
 const golos = require('../core/golos')
@@ -18,7 +18,7 @@ const regExpNumber = /^\d+$/
 
 function getCommonWhereFilter(req) {
   const where = {}
-  let {reason, username, start, end, limit, offset} = req.query
+  let { reason, username, start, end, limit, offset } = req.query
   if (!regExpNumber.test(limit)) limit = undefined
   if (!regExpNumber.test(offset)) offset = undefined
   if (!regExpNumber.test(reason)) reason = undefined
@@ -26,14 +26,14 @@ function getCommonWhereFilter(req) {
   if (!regExpNumber.test(end)) end = undefined
 
   if (reason) where.reason = reason
-  if (username) where.username = {like: `${username}%`}
+  if (username) where.username = { like: `${username}%` }
   if (start || end) {
     where.created = {}
     if (start) where.created['$gte'] = start
     if (end) where.created['$lt'] = end
   }
 
-  return {where, limit, offset}
+  return { where, limit, offset }
 }
 
 function commonCatchHandler(err, res) {
@@ -48,22 +48,25 @@ function commonCatchHandler(err, res) {
 }
 
 module.exports.create = async (req, res) => {
-  const {author, permlink, comment, reason, username} = req.body
+  const { author, permlink, comment, reason, username } = req.body
 
   try {
-    let post = await app.models.Post.findOne({author, permlink})
+    let post = await app.models.Post.findOne({ author, permlink })
     if (!post) {
-      const postFromChain = await golos.getContent({author, permlink})
+      const postFromChain = await golos.getContent({ author, permlink })
 
-      if (postFromChain)
-        post = await app.models.Post.insert({
+      if (!postFromChain)
+        throw new BadRequestError(`Not found post with author:${author} and permlink: ${permlink}`)
+
+      post = await app.models.Post.insert(
+        {
           id: postFromChain.id,
           author: postFromChain.author,
           permlink: postFromChain.permlink,
           created: moment().unix()
-        }, {id: postFromChain.id})
-      else
-        throw new BadRequestError(`Not found post with author:${author} and permlink: ${permlink}`)
+        },
+        { id: postFromChain.id }
+      )
     }
 
     const data = {
@@ -74,7 +77,10 @@ module.exports.create = async (req, res) => {
       created: moment().unix()
     }
 
-    const complaint = await app.models.Complaint.insert(data, {username: data.username, postId: data.postId})
+    const complaint = await app.models.Complaint.insert(data, {
+      username: data.username,
+      postId: data.postId
+    })
     res.send(complaint)
   } catch (err) {
     commonCatchHandler(err, res)
@@ -82,9 +88,9 @@ module.exports.create = async (req, res) => {
 }
 
 module.exports.find = async (req, res) => {
-  const {where, limit, offset} = getCommonWhereFilter(req)
+  const { where, limit, offset } = getCommonWhereFilter(req)
   try {
-    const collection = await app.models.Complaint.find({where, limit, offset})
+    const collection = await app.models.Complaint.find({ where, limit, offset })
     res.status(HttpStatus.OK).send(collection)
   } catch (err) {
     commonCatchHandler(err, res)
@@ -92,17 +98,15 @@ module.exports.find = async (req, res) => {
 }
 
 module.exports.top = async (req, res) => {
-  const {where, limit, offset} = getCommonWhereFilter(req)
-  const {author} = req.query
+  const { where, limit, offset } = getCommonWhereFilter(req)
+  const { author } = req.query
   try {
     if (author) {
-      const posts = await app.models.Post.find({where: {author}, limit})
-      if (posts.length)
-        where.postId = {in: posts.map(post => post.id)}
-      else
-        where.postId = 0
+      const posts = await app.models.Post.find({ where: { author }, limit })
+      if (posts.length) where.postId = { in: posts.map(post => post.id) }
+      else where.postId = 0
     }
-    const top = await app.models.Complaint.top({where, limit, offset})
+    const top = await app.models.Complaint.top({ where, limit, offset })
     res.status(HttpStatus.OK).send(top)
   } catch (err) {
     commonCatchHandler(err, res)
@@ -110,12 +114,12 @@ module.exports.top = async (req, res) => {
 }
 
 module.exports.slice = async (req, res) => {
-  const {author, permlink} = req.query
+  const { author, permlink } = req.query
   try {
     if (!author || !permlink)
       throw new BadRequestError(`Required fields: author(${author}), permlink(${permlink})`)
 
-    const slice = await app.models.Complaint.slice({author, permlink})
+    const slice = await app.models.Complaint.slice({ author, permlink })
     res.status(HttpStatus.OK).send(slice)
   } catch (err) {
     commonCatchHandler(err, res)

@@ -25,7 +25,7 @@ function call(api, method, params) {
         delete callbacks[id]
         reject(new Error('TimeOut golos'))
       }
-    }, 2000)
+    }, 5000)
   })
 }
 

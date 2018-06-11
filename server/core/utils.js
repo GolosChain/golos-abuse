@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt')
 const SqlString = require('sqlstring')
 
-module.exports.hashPassword = (password) => {
-  return bcrypt.hashSync('password', 10)
+module.exports.hashPassword = password => {
+  return bcrypt.hashSync(password, 10)
 }
 
 module.exports.comparePassword = (password, hash) => {
@@ -16,16 +16,16 @@ module.exports.tupleToJson = (tuple, fields) => {
   }, {})
 }
 
-const operators = {
-  $gte: '>=',
-  $gt: '>',
-  $lte: '=<',
-  $lt: '<',
-  like: 'LIKE',
-  in: 'IN'
-}
-
 module.exports.whereObjToSqlArrCondition = (where, table) => {
+  const operators = {
+    $gte: '>=',
+    $gt: '>',
+    $lte: '=<',
+    $lt: '<',
+    like: 'LIKE',
+    in: 'IN'
+  }
+
   return Object.keys(where).reduce((accum, key) => {
     const _key = table ? [table, key].join('.') : key
     const value = where[key]
