@@ -1,17 +1,18 @@
 version: '3.1'
 services:
-  tarantool:
-    container_name: tarantool
-    image: tarantool/tarantool:2
+  postgresql:
+    container_name: postgresql
+    image: postgres:10.4
     restart: always
-    command: ["tarantool", "/opt/tarantool/app.lua"]
     ports:
-      - 3301:3301
+      - 5432:5432
     environment:
-      TARANTOOL_PORT: "3301"
+      POSTGRES_USER: "golos"
+      POSTGRES_PASSWORD: "golos"
+      POSTGRES_DB: "golos"
     volumes:
-      - ./server/tarantool/app:/opt/tarantool
-      - ./server/tarantool/data:/var/lib/tarantool
+      - ./data/docker/postgresql/data:/var/lib/postgresql/data
+      - ./data/postgresql:/docker-entrypoint-initdb.d
   swagger:
     container_name: swagger
     image: swaggerapi/swagger-ui

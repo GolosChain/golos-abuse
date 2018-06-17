@@ -1,6 +1,6 @@
 const W3CWebSocket = require('websocket').w3cwebsocket
 
-const config = require('../config')
+const config = require('@config')
 const logger = require('./logger')
 
 const callbacks = {}
@@ -16,7 +16,7 @@ function call(api, method, params) {
       id: lastId,
       method: 'call',
       params: [api, method, params],
-      jsonrpc: "2.0"
+      jsonrpc: '2.0'
     }
 
     client.send(JSON.stringify(json))
@@ -32,8 +32,8 @@ function call(api, method, params) {
 module.exports.init = () => {
   return new Promise((resolve, reject) => {
     client = new W3CWebSocket(config.get('golos:url'))
-    client.onerror = (err) => {
-      reject({code: 'GOLOS'})
+    client.onerror = err => {
+      reject({ code: 'GOLOS' })
     }
 
     client.onopen = () => {
@@ -45,7 +45,7 @@ module.exports.init = () => {
       logger.info('Golos client Closed')
     }
 
-    client.onmessage = (e) => {
+    client.onmessage = e => {
       if (typeof e.data === 'string') {
         try {
           const data = JSON.parse(e.data)
@@ -61,12 +61,14 @@ module.exports.init = () => {
   })
 }
 
-module.exports.getContent = async ({author, permlink}) => {
+module.exports.getContent = async ({ author, permlink }) => {
   let data = await call('social_network', 'get_content', [author, permlink])
   return data.id ? data : null
 }
 
-module.exports.getAccount = async ({username}) => {
+module.exports.getAccount = async ({ username }) => {
   let [user] = await call('database_api', 'get_accounts', [[username]])
   return user || null
 }
+
+module.exports.close = () => client.close()

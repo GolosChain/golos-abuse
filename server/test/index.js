@@ -1,37 +1,42 @@
 process.env.NODE_ENV = 'test'
+const config = require('@config')
 
-const STORAGE = require('./data/storage')
+const chai = require('chai')
+const chaiHttp = require('chai-http')
+chai.should()
+chai.use(chaiHttp)
 
-const clearTarantool = async tarantool => {
-  await tarantool.call('sql', 'DELETE FROM users')
-  await tarantool.call('sql', 'DELETE FROM complaints')
-  await tarantool.call('sql', 'DELETE FROM posts')
+const insertTestData = require('./data/insert-test-data')
+const storage = {
+  BASE_URL: `http://127.0.0.1:${config.get('server:port')}`,
+  chai,
+  data: insertTestData.data
 }
 
-describe('API', function() {
-  this.timeout(60000)
-  before(async function() {
-    STORAGE.app = await require('../index')()
-    await clearTarantool(STORAGE.app.tarantool)
+const requireFn = module => {
+  require(`${__dirname}/modules/${module}`)(storage)
+}
 
-    let sql = `INSERT INTO users VALUES(NULL, 'admin@domain.com', '$2b$10$HmMMiFfH8AY5CUm84MiLLOhTocKpHDCLlUO/BxJTt8Wb3Xd2S5mZK', 2, 1, 1525242582)`
-    await STORAGE.app.tarantool.call('sql', sql)
-    sql = `INSERT INTO users VALUES(NULL, 'user@domain.com', '$2b$10$HmMMiFfH8AY5CUm84MiLLOhTocKpHDCLlUO/BxJTt8Wb3Xd2S5mZK', 1, 1, 1525242582)`
-    await STORAGE.app.tarantool.call('sql', sql)
-  })
+const main = async () => {
+  storage.app = await require('../index')()
+  await insertTestData.init(storage.app)
 
-  describe('Modules', function() {
-    [
-      'auth',
-      'users',
-      'complaints'
-    ].forEach(module => {
-      require(`${__dirname}/modules/${module}`)(STORAGE)
+  describe('REST API TESTS', function() {
+    describe('Modules', function() {
+      const modules = [
+        'controllers/AuthController',
+        'controllers/UserController',
+        'controllers/ComplaintController'
+      ]
+      modules.forEach(requireFn)
+    })
+
+    after(() => {
+      storage.app.quit()
     })
   })
 
-  after(async function() {
-    await clearTarantool(STORAGE.app.tarantool)
-    STORAGE.app.quit()
-  })
-})
+  run()
+}
+
+main()

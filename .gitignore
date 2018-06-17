@@ -10,7 +10,6 @@
 *.swp
 *.tgz
 *.xml
-!client/static/sitemap.xml
 .DS_Store
 .idea
 .project
@@ -23,14 +22,11 @@ npm-debug.log
 *.ntvs*
 *.njsproj
 *.sln
-server/data/docker
-server/datasources.json
-server/config/config.production.json
-server/config/config.test.json
-server/config/config.develop.json
-server/storage/*
-server/tarantool/app/model.mwb.*
-server/tarantool/data/*
+data/docker/postgresql
+data/postgresql/data/*
+common/@config/config.production.json
+common/@config/config.test.json
+common/@config/config.develop.json
 client/dist
 test.js
 docs/*

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.8.1" last-position="0,0" last-zoom="1"
+	 default-schema="public" default-owner="postgres">
+<database name="new_database">
+</database>
+
+<schema name="public" protected="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="users">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="496" y="311"/>
+	<column name="id" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="email" not-null="true">
+		<type name="varchar" length="256"/>
+	</column>
+	<column name="password" not-null="true">
+		<type name="varchar" length="60"/>
+	</column>
+	<column name="role" not-null="true">
+		<type name="smallint"/>
+	</column>
+	<column name="status" not-null="true">
+		<type name="smallint"/>
+	</column>
+	<column name="createdAt" not-null="true">
+		<type name="timestamp"/>
+	</column>
+	<column name="updatedAt">
+		<type name="timestamp"/>
+	</column>
+	<constraint name="users_primary_key" type="pk-constr" table="public.users">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="users_email_unique" table="public.users"
+	 concurrent="false" unique="true" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="email"/>
+		</idxelement>
+</index>
+
+<table name="posts">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="824" y="343"/>
+	<column name="id" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="author" not-null="true">
+		<type name="varchar" length="256"/>
+	</column>
+	<column name="permlink" not-null="true">
+		<type name="varchar" length="256"/>
+	</column>
+	<column name="createdAt" not-null="true">
+		<type name="timestamp"/>
+	</column>
+	<constraint name="posts_primary_key" type="pk-constr" table="public.posts">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="complaints">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="728" y="518"/>
+	<column name="id" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="varchar" length="256"/>
+	</column>
+	<column name="postId" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="reason" not-null="true">
+		<type name="smallint"/>
+	</column>
+	<column name="comment" not-null="true">
+		<type name="varchar" length="256"/>
+	</column>
+	<column name="createdAt" not-null="true">
+		<type name="timestamp"/>
+	</column>
+	<constraint name="complaints_primary_key" type="pk-constr" table="public.complaints">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="complaints_user_post_unique" table="public.complaints"
+	 concurrent="false" unique="true" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="username"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="&quot;postId&quot;"/>
+		</idxelement>
+</index>
+
+<constraint name="complaints_posts_foreign_keys" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.posts" table="public.complaints">
+	<columns names="postId" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_complaints_posts" type="relfk"
+	 src-table="public.complaints"
+	 dst-table="public.posts"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>

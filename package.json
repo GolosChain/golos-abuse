@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_PATH=./common node server/index",
-    "test:api": "NODE_PATH=./common ./node_modules/mocha/bin/mocha -b server/test",
-    "test": "NODE_PATH=./common npm run test:api"
+    "start": "NODE_PATH=./common:./server node server/index",
+    "test:api": "NODE_PATH=./common:./server ./node_modules/mocha/bin/mocha -b server/test --delay",
+    "test": "NODE_PATH=./common:./server npm run test:api"
   },
   "author": "",
   "license": "ISC",
@@ -26,10 +26,12 @@
     "nconf": "^0.10.0",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
+    "pg": "^7.4.3",
     "request": "^2.85.0",
+    "restify-errors": "^6.1.0",
+    "sequelize": "^4.37.10",
     "sqlstring": "^2.3.1",
     "steem": "^0.7.1",
-    "tarantool-driver": "^2.0.5",
     "websocket": "^1.0.26"
   }
 }

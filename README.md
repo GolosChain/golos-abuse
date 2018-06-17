@@ -17,7 +17,7 @@ nvm use 8.11.1
 
 ### Tarantool
 
-Приложение хранит данные в базе данных Tarantool. Используйте [Docker Compose](https://docs.docker.com/compose/) с нашим [docker-compose.yml](./docker-compose.yml) или скайчайте Tarantool в готовой сборке по [ссылке](https://tarantool.io/en/download/download.html). При использовании docker-compose данные будут сохранятся в директорию: **./server/tarantool/data/**. Lua приложение и инициализации таблиц находится в [app.lua](./server/tarantool/app/app.lua).
+Приложение хранит данные в базе данных [PostgreSQL](https://www.postgresql.org/). Используйте [Docker Compose](https://docs.docker.com/compose/) с нашим [docker-compose.yml](./docker-compose.yml) или скайчайте PostrgeSQL в готовой сборке по [ссылке](https://www.postgresql.org/download/), в этом случае вам необходимо использовать [init.sql](./data/postgresql/init.sql) для создания таблиц. При использовании docker-compose данные будут сохранятся в директорию: **./data/postgresql/data/**.
 
 ```bash
 docker-compose up -d
@@ -39,12 +39,12 @@ npm install
 
 ### 3. Создайте файлы конфигрураций
 
-Конфигурация по умолчанию хранится в [config.json](./config/config.json). Для изменения конфигурации лучше всего создать новый config.[ENV].json, который зависит от переменной окружения и расширяет набор конфигураций по умолчанию.
+Конфигурация по умолчанию хранится в [config.json](./common/@config/config.json). Для изменения конфигурации лучше всего создать новый config.[ENV].json, который зависит от переменной окружения и расширяет набор конфигураций по умолчанию.
 
 ```bash
-cp ./server/config/config.json ./server/config/config.production.json
-cp ./server/config/config.json ./server/config/config.development.json
-cp ./server/config/config.json ./server/config/config.test.json
+cp ./common/@config/config.json ./common/@config/config.production.json
+cp ./common/@config/config.json ./common/@config/config.development.json
+cp ./common/@config/config.json ./common/@config/config.test.json
 ```
 
 ```json
@@ -53,12 +53,14 @@ cp ./server/config/config.json ./server/config/config.test.json
   "JWT": {
     "secret": "SET YOUR SECRET FOR JWT"
   },
-  // Параметры инстанса тарантула
-  "tarantool": {
-    "host": "localhost",
-    "port": "3301",
-    "log": false,
-    "timeout": 0
+  // Параметры инстанса PostgreSQL
+  "postgresql": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "database": "golos",
+    "username": "golos",
+    "password": "golos",
+    "dialect": "postgres"
   },
   // Параметры сервера
   "server": {
@@ -79,7 +81,7 @@ cp ./server/config/config.json ./server/config/config.test.json
 
 ## Запуск тестов
 
-Репозиторий содержит тесты API, использован подход black box. Для запуска тестов необходимо задать тестового пользователя с приватным постинг ключом от блокчейна GOLOS. Это необходимо для полной проверки тестов, включая взаимодействие с публичной нодой GOLOS и проверки подписи при создании новых жалоб. Так же для тестов необходимо иметь запущенный инстанс базы **tarantool** с [app.lua](./server/tarantool/app/app.lua).
+Репозиторий содержит тесты API, использован подход black box. Для запуска тестов необходимо задать тестового пользователя с приватным постинг ключом от блокчейна GOLOS. Это необходимо для полной проверки тестов, включая взаимодействие с публичной нодой GOLOS и проверки подписи при создании новых жалоб. Так же для тестов необходимо иметь запущенный инстанс базы **PostgreSQL**.
 
 ```bash
 npm test

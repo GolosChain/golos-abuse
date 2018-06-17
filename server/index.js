@@ -1,56 +1,41 @@
-const config = require('./config')
-const logger = require('./core/logger')
+const config = require('@config')
+const { app, logger, golos, http, postgresql } = require('@core')
 
-const app = require('./core/app')
+const routing = require('./routing')
+const passport = require('./auth/passport')
 
-
-const passport = require('./core/passport')
-const db = require('./core/db')
-
-
-async function init() {
+async function main() {
   try {
-    // Await tarantool connect
-    app.tarantool = await db
-    logger.info(`Tarantool conected on ${config.get('tarantool:host')}:${config.get('tarantool:port')}`)
+    // init postgresql
+    app.postgresql = postgresql
+    app.models = require('@models')
+    await app.postgresql.authenticate()
+    const postgresqlHost = [config.get('postgresql:host'), config.get('postgresql:port')].join(':')
+    logger.info(`Connected to postgresql on ${postgresqlHost}`)
 
     // init passport
     app.use(passport.initialize())
+    
+    // init golos WS
+    app.golos = golos
+    await golos.init()
 
+    // init routing
+    routing(app)
 
-    app.models = {
-      User: require('./models/User'),
-      Post: require('./models/Post'),
-      Complaint: require('./models/Complaint')
-    }
-
-    app.golosClient = await require('./core/golos').init()
-
-    // Run server
-    const server = require('./core/http')
-    await server
-    logger.info(`Http server start listen on ${config.get('server:port')} port`)
-
+    // init http server
+    app.server = await http({ app, port: config.get('server:port') })
   } catch (err) {
-    if (err.code === 'ECONNREFUSED') {
-      if (err.port === config.get('tarantool:port') && err.address == config.get('tarantool:host')) {
-        logger.info(`Error init app, details: Tarantool not started`)
-      }
-    } else if (err.code === 'GOLOS') {
-      logger.info(`Error init app, details: Golos node not connected, wrong address?`)
-    } else {
-      logger.info(`Error init app, details:`, err)
-    }
+    logger.info(`Error init api, details:`, err)
     process.exit(0)
   }
+
   return app
 }
 
-if (require.main === module) {
-  init()
-}
+if (require.main === module) main()
 
-module.exports = init
+module.exports = main
 
 // Catch unhandled rejections and pretty log and safe shutdown app
 process.on('unhandledRejection', err => {

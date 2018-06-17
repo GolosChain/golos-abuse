@@ -1,28 +1,36 @@
-
-const HttpStatus = require('http-status-codes')
 const jwt = require('jsonwebtoken')
+const errors = require('restify-errors')
 
-const config = require('../config')
-const app = require('../core/app')
-const utils = require('../core/utils')
-const passport = require('../core/passport')
-const UnauthorizedError = require('../errors/UnauthorizedError')
+const { User } = require('@models')
+const config = require('@config')
+
+function generateToken(user) {
+  return jwt.sign({ id: user.id }, config.get('JWT:secret'))
+}
 
 module.exports.auth = async (req, res) => {
-  try{
-    const {email, password} = req.body
-    if(!email || !password) throw new UnauthorizedError()
+  try {
+    const { email, password } = req.body
 
-    const user = await app.models.User.findOne({email})
-    if (!user || !utils.comparePassword(password, user.password)) throw new UnauthorizedError()
+    if (!email || !password) throw new errors.UnauthorizedError()
 
-    const token = jwt.sign({id: user.id}, config.get('JWT:secret'))
-    res.status(HttpStatus.OK).send({token})
-  } catch(err){
-    if(!(err instanceof UnauthorizedError)){
-      console.log(err)
-      err = new UnauthorizedError()
-    }
-    res.status(HttpStatus.UNAUTHORIZED).send(err)
+    const user = await User.findOne({ where: { email } })
+
+    if (!user || !user.comparePassword(password)) throw new errors.UnauthorizedError()
+    const token = generateToken(user)
+    res.send({ token })
+  } catch (err) {
+    if (!(err instanceof errors.UnauthorizedError)) err = new errors.InternalServerError(err)
+    res.status(err.statusCode)
+    res.send(err)
   }
+}
+
+module.exports.current = async (req, res) => {
+  res.send(req.user)
+}
+
+module.exports.refresh = async (req, res) => {
+  const token = generateToken(req.user)
+  res.send({ token })
 }

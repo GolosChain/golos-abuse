@@ -2,11 +2,13 @@
   "JWT": {
     "secret": "SET YOUR SECRET FOR JWT"
   },
-  "tarantool": {
+  "postgresql": {
     "host": "127.0.0.1",
-    "port": 3301,
-    "log": false,
-    "timeout": 0
+    "port": 5432,
+    "database": "golos",
+    "username": "golos",
+    "password": "golos",
+    "dialect": "postgres"
   },
   "server": {
     "port": 8080,

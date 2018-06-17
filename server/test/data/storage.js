@@ -3,7 +3,7 @@ let chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 chai.should()
 const config = require('../../config')
-const {USER} = require('app@constants')
+const {USER} = require('@constants')
 module.exports = {
   chai: chai,
   app: null,
