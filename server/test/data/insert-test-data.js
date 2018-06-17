@@ -25,7 +25,7 @@ const data = {
 module.exports.data = data
 
 module.exports.init = async app => {
-  const { User, Post, Complaint } = require('@models')
+  const { User, Post, Complaint } = require('models')
   const tables = [[data.users, User], [data.complaints, Complaint], [data.posts, Post]]
 
   for (const [collection, Model] of tables) {

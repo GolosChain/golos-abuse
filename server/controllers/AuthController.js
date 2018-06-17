@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const errors = require('restify-errors')
 
-const { User } = require('@models')
+const { User } = require('models')
 const config = require('@config')
 
 function generateToken(user) {

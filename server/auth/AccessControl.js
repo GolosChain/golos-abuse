@@ -1,6 +1,6 @@
 const errors = require('restify-errors')
 const {Signature, PublicKey} = require('steem/lib/auth/ecc')
-const {golos} = require('@core')
+const {golos} = require('core')
 
 module.exports.byRoles = roles => (req, res, next) => {
   if (!req.user || !~roles.indexOf(req.user.role)) {

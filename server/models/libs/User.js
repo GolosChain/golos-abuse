@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const bcrypt = require('bcrypt')
 
-const postgresql = require('@core/libs/postgresql')
+const postgresql = require('core/libs/postgresql')
 const { USER } = require('@constants')
 
 const Model = postgresql.define(

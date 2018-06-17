@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 const config = require('@config')
-const { logger } = require('@core')
+const { logger } = require('core')
 
 const Op = Sequelize.Op
 const { database, username, password, port = 5432, host = '127.0.0.1' } = config.get('postgresql')

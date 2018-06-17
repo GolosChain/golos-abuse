@@ -1,8 +1,8 @@
 const fs = require('fs')
-const AuthController = require('../controllers/AuthController')
-const passport = require('../auth/passport')
+const AuthController = require('controllers/AuthController')
+const passport = require('auth/passport')
 const authenticate = passport.authenticate('jwt', { session: false })
-const { byRoles: AccessByRoles, bySign: AccessBySign } = require('../auth/AccessControl')
+const { byRoles: AccessByRoles, bySign: AccessBySign } = require('auth/AccessControl')
 const {
   USER: { ROLES }
 } = require('@constants')
@@ -30,13 +30,13 @@ module.exports = app => {
   const onlyAdmin = AccessByRoles([ROLES.ADMIN])
 
   // Auth routers
-  const AuthController = require('../controllers/AuthController')
+  const AuthController = require('controllers/AuthController')
   app.route('/auth').post(AuthController.auth)
   app.route('/auth/current').get(authenticate, AuthController.current)
   app.route('/auth/refresh').get(authenticate, AuthController.refresh)
 
   // Users routers
-  const UserController = require('../controllers/UserController')
+  const UserController = require('controllers/UserController')
   app
     .route('/users')
     .get(authenticate, onlyAdmin, UserController.findAll)
@@ -45,7 +45,7 @@ module.exports = app => {
   app.route('/users/:id').put(authenticate, onlyAdmin, UserController.update)
 
   // Complaints routers
-  const ComplaintController = require('../controllers/ComplaintController')
+  const ComplaintController = require('controllers/ComplaintController')
   app
     .route('/complaints')
     .post(AccessBySign, ComplaintController.create)

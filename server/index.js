@@ -1,14 +1,14 @@
 const config = require('@config')
-const { app, logger, golos, http, postgresql } = require('@core')
+const { app, logger, golos, http, postgresql } = require('core')
 
-const routing = require('./routing')
-const passport = require('./auth/passport')
+const routing = require('routing')
+const passport = require('auth/passport')
 
 async function main() {
   try {
     // init postgresql
     app.postgresql = postgresql
-    app.models = require('@models')
+    app.models = require('models')
     await app.postgresql.authenticate()
     const postgresqlHost = [config.get('postgresql:host'), config.get('postgresql:port')].join(':')
     logger.info(`Connected to postgresql on ${postgresqlHost}`)

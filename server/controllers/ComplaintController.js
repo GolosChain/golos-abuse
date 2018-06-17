@@ -3,8 +3,8 @@ const path = require('path')
 const moment = require('moment')
 
 const { USER } = require('@constants')
-const { Post, Complaint } = require('@models')
-const { golos, RestController } = require('@core')
+const { Post, Complaint } = require('models')
+const { golos, RestController } = require('core')
 
 const RestComplaintCreate = RestController.create(Complaint)
 module.exports.create = async (req, res) => {

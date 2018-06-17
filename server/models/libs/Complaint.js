@@ -1,24 +1,34 @@
 const Sequelize = require('sequelize')
 const bcrypt = require('bcrypt')
 
-const postgresql = require('@core/libs/postgresql')
+const { COMPLAINT } = require('@constants')
+const postgresql = require('core/libs/postgresql')
 
 const Model = postgresql.define(
-  'posts',
+  'complaints',
   {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
-    author: {
+    username: {
       type: Sequelize.STRING,
       allowNull: false,
       validate: {
         len: [1, 256]
       }
     },
-    permlink: {
+    postId: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    reason: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      validate: { isIn: [Object.values(COMPLAINT.REASON)] }
+    },
+    comment: {
       type: Sequelize.STRING,
       allowNull: false,
       validate: {
@@ -33,7 +43,7 @@ const Model = postgresql.define(
   {
     timestamps: true,
     updatedAt: false,
-    tableName: 'posts'
+    tableName: 'complaints'
   }
 )
 
